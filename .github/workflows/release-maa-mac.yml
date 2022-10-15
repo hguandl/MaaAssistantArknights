@@ -45,7 +45,7 @@ jobs:
       - name: Upload disk image
         uses: actions/upload-artifact@v1
         with:
-          name: MaaBundle-darwin
+          name: MAA-macOS
           path: src/MeoAsstMac/MeoAsstMac.dmg
 
   macos-release:
@@ -57,11 +57,11 @@ jobs:
         run: |
           GIT_TAG=${GITHUB_REF#refs/*/}
           echo "GIT_TAG=${GIT_TAG}" >> $GITHUB_ENV
-          echo "APP_DMG=MaaBundle-darwin-${GIT_TAG}.dmg" >> $GITHUB_ENV
+          echo "APP_DMG=MAA-macOS-${GIT_TAG}.dmg" >> $GITHUB_ENV
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          name: MaaBundle-darwin
+          name: MAA-macOS
       - name: 'Verify image'
         run: |
           mv MeoAsstMac.dmg $APP_DMG
