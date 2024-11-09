@@ -172,8 +172,16 @@ def main():
         download_dir.mkdir(parents=True, exist_ok=True)
         for asset in [devel_asset, runtime_asset]:
             url = asset['browser_download_url']
+            name = target_tag + "-" + sanitize_filename(asset["name"])
+            local_file = download_dir / name
+            if local_file.exists():
+                print("trying already downloaded", local_file)
+                try:
+                    shutil.unpack_archive(local_file, maadeps_dir)
+                    continue
+                except Exception as e:
+                    print("invalid local file", local_file, e)
             print("downloading from", url)
-            local_file = download_dir / sanitize_filename(asset["name"])
             urllib.request.urlretrieve(url, local_file,
                                        reporthook=ProgressHook())
             print("extracting", asset["name"])
