@@ -516,7 +516,7 @@ jobs:
             cd release
             echo "$APPSTORE_KEY" > "AuthKey_${APPSTORE_KEYID}.p8"
             find . -name "*.dmg" | while read dmg; do
-              xcrun notarytool submit -k "AuthKey_${APPSTORE_KEYID}.p8" -d "$APPSTORE_KEYID" -i "$ISSUER_ID" --wait ${dmg}
+              xcrun notarytool submit -k "AuthKey_${APPSTORE_KEYID}.p8" -d "$APPSTORE_KEYID" -i "123456" --wait ${dmg}
 
               retVal=$?
               if [ $retVal -ne 0 ]; then
