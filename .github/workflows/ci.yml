@@ -515,15 +515,19 @@ jobs:
           command: |
             cd release
             echo "$APPSTORE_KEY" > "AuthKey_${APPSTORE_KEYID}.p8"
-            find . -name "*.dmg" | while read dmg; do
-              xcrun notarytool submit -k "AuthKey_${APPSTORE_KEYID}.p8" -d "$APPSTORE_KEYID" -i "123456" --wait ${dmg}
-              xcrun stapler staple ${dmg}
-            done
-            cd -
+            dmg="MAA-${{ needs.meta.outputs.tag }}-macos-universal.dmg"
+            xcrun notarytool submit -k "AuthKey_${APPSTORE_KEYID}.p8" -d "$APPSTORE_KEYID" -i "123456" --wait ${dmg}
         env:
           APPSTORE_KEYID: ${{ secrets.HGUANDL_APPSTORE_KEYID }}
           APPSTORE_KEY: ${{ secrets.HGUANDL_APPSTORE_KEY }}
           ISSUER_ID: ${{ secrets.HGUANDL_APPSTORE_ISSUER }}
+
+      - name: Attach Notarization Tickets
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          dmg="MAA-${{ needs.meta.outputs.tag }}-macos-universal.dmg"
+          xcrun stapler staple ${dmg}
+        working-directory: release
 
       - name: Upload MAA to Github
         uses: actions/upload-artifact@v4
