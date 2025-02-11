@@ -508,7 +508,7 @@ jobs:
 
       - name: Notarize Image
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: nick-fields/retry@v2
+        uses: nick-fields/retry@v3
         with:
           max_attempts: 3
           timeout_minutes: 15
