@@ -43,6 +43,10 @@ bool asst::PlayToolsController::connect(
         m_screencap_method = ScreencapMethod::MacSCK;
         m_minimal_version = 3;
     }
+    else if (config == "MacMTL") {
+        m_screencap_method = ScreencapMethod::MTL;
+        m_minimal_version = 4;
+    }
 
     return open();
 }
@@ -89,6 +93,8 @@ bool asst::PlayToolsController::screencap(cv::Mat& image_payload, bool allow_rec
         return false;
 #endif // ASST_WITH_MAC_SCK
     }
+    case ScreencapMethod::MTL:
+        return screencap_bgr(image_payload, allow_reconnect, { 'M', 'T', 'L', 0 });
     default:
         return false;
     }
@@ -131,7 +137,10 @@ bool asst::PlayToolsController::screencap_rgba(cv::Mat& image_payload, bool allo
     return true;
 }
 
-bool asst::PlayToolsController::screencap_bgr(cv::Mat& image_payload, bool allow_reconnect [[maybe_unused]])
+bool asst::PlayToolsController::screencap_bgr(
+    cv::Mat& image_payload,
+    bool allow_reconnect [[maybe_unused]],
+    std::array<char, 4> magic)
 {
     if (!open()) {
         return false;
@@ -139,7 +148,8 @@ bool asst::PlayToolsController::screencap_bgr(cv::Mat& image_payload, bool allow
     std::array<uint32_t, 3> header;
 
     try {
-        constexpr char request[] = { 0, 4, 'B', 'G', 'R', 1 };
+        std::array<char, 6> request = { 0, 4 };
+        std::copy(magic.begin(), magic.end(), request.begin() + 2);
         boost::asio::write(m_socket, boost::asio::buffer(request));
         boost::asio::read(m_socket, boost::asio::buffer(header));
     }

@@ -78,6 +78,7 @@ protected:
         RGBA,
         BGR,
         MacSCK,
+        MTL,
     } m_screencap_method = ScreencapMethod::RGBA;
 
     enum class TouchPhase
@@ -108,7 +109,7 @@ private:
     bool toucher_commit(const TouchPhase phase, const Point& p, const int delay);
 
     bool screencap_rgba(cv::Mat& image_payload, bool allow_reconnect);
-    bool screencap_bgr(cv::Mat& image_payload, bool allow_reconnect);
+    bool screencap_bgr(cv::Mat& image_payload, bool allow_reconnect, std::array<char, 4> magic = { 'B', 'G', 'R', 1 });
 
     bool fetch_frame_rect();
     bool fetch_bundle_id();
